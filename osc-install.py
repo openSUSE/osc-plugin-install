@@ -258,7 +258,7 @@ def do_install(self, subcmd, opts, *args):
         dl = 'http://pmbs.links2linux.org/download'
         # FIXME: home projects are not there, unfortunatly
 
-    # default_platform = 'openSUSE_12.1'
+    # default_platform = 'openSUSE_Tumbleweed'
     osc_cache = '/var/tmp/osbuild-packagecache'
     etc_S_r = '/etc/os-release'
     if len(args) == 1:
@@ -332,7 +332,7 @@ def do_install(self, subcmd, opts, *args):
         seen = {}
         for r in all: 
           proj_name = r['project']
-          if r['repository'] == best and not seen.has_key(proj_name):
+          if r['repository'] == best and not proj_name in seen:
             if r['arch'] in arch_words or r['arch'] == 'noarch':
               if proj_name == best:
                 res.insert(0,r)
@@ -346,7 +346,7 @@ def do_install(self, subcmd, opts, *args):
         i = 1
         for r in res:
           cached = ''
-          if r.has_key('cached'): cached = ' (cached %s)' % (r['cached']['size'])
+          if 'cached' in r: cached = ' (cached %s)' % (r['cached']['size'])
           print("%2d: %-50s%-15s %-10s%s" % (i, r['project'], r['version'], r['arch'], cached))
           i += 1
         print('')
@@ -564,14 +564,13 @@ def _read_system_name(self, file, opts):
       a[i] = 2
     for i in (re.split("[\s:=\(\)]+", text)):
       a[i] = 3
-    if a.has_key(''): del a['']
 
-    if a.has_key('i386') and not a.has_key('i586'): a['i586'] = a['i386'] - 1
-    if a.has_key('i386') and not a.has_key('i686'): a['i686'] = a['i386'] - 1
-    if a.has_key('i586') and not a.has_key('i386'): a['i386'] = a['i586'] - 1
-    if a.has_key('i586') and not a.has_key('i686'): a['i686'] = a['i586'] - 1
-    if a.has_key('i686') and not a.has_key('i386'): a['i386'] = a['i686'] - 1
-    if a.has_key('i686') and not a.has_key('i586'): a['i586'] = a['i686'] - 1
+    if 'i386' in a and not 'i586' in a: a['i586'] = a['i386'] - 1
+    if 'i386' in a and not 'i686' in a: a['i686'] = a['i386'] - 1
+    if 'i586' in a and not 'i386' in a: a['i386'] = a['i586'] - 1
+    if 'i586' in a and not 'i686' in a: a['i686'] = a['i586'] - 1
+    if 'i686' in a and not 'i386' in a: a['i386'] = a['i686'] - 1
+    if 'i686' in a and not 'i586' in a: a['i586'] = a['i686'] - 1
     
     # SUSE Linux Enterprise Desktop 11 (x86_64)
     # VERSION = 11
@@ -604,7 +603,7 @@ def _best_platform(self, etc_suse_release, repos, opts):
     etc_suse_release is ignored, if platform is not None.
     """
    
-    default_platform = 'openSUSE_12.2'
+    default_platform = 'openSUSE_Tumbleweed'
     platform_in = opts.platform
     if opts.verbose:
       print("_best_platform: etc_suse_release=%s, platform_in=%s, repos=%s" % (etc_suse_release, platform_in, repos))
@@ -620,7 +619,7 @@ def _best_platform(self, etc_suse_release, repos, opts):
 
     platform = None
     build_platform = None
-    if conf.config.has_key('build_project'):
+    if 'build_project' in conf.config:
       build_platform = conf.config['build_project']
 
     max_score = 0
