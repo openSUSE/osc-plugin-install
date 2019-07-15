@@ -62,7 +62,7 @@
 #
 # Osc install prompts you with candidate packages from a list of projects that
 # build the package for your system. It can discern platform and architecture
-# from /etc/SuSE-release and/or your ~/.oscrc build_project setting.
+# from /etc/os-release and/or your ~/.oscrc build_project setting.
 #
 # Osc install suggests to add repo URLs for newly used projects to the zypper 
 # repository list. This has little importance for osc, but is very
@@ -202,8 +202,8 @@ OSC_INS_REPO_MAP = """
 
 @cmdln.hide(1)
 @cmdln.alias('in')
-@cmdln.option('-p', '--platform', metavar='SUSE_RELEASE', help='platform substring to match. Default: guess platform from /etc/SuSE-Release')
-@cmdln.option('-a', '--arch', metavar='ARCH', help='system architecture. Default: guess platform from /etc/SuSE-Release')
+@cmdln.option('-p', '--platform', metavar='SUSE_RELEASE', help='platform substring to match. Default: guess platform from /etc/os-release')
+@cmdln.option('-a', '--arch', metavar='ARCH', help='system architecture. Default: guess platform from /etc/os-release')
 @cmdln.option('-f', '--first', action='store_true', help='if multiple projects offer a package, choose the first. Default: Ask user')
 @cmdln.option('-v', '--verbose', action='store_true', help='babble while working')
 @cmdln.option('-I', '--no-cache', action='store_true', help='ignore cached packages, always download. Default: check build cache /var/tmp/osbuild-packagecache')
@@ -259,7 +259,7 @@ def do_install(self, subcmd, opts, *args):
 
     # default_platform = 'openSUSE_12.1'
     osc_cache = '/var/tmp/osbuild-packagecache'
-    etc_S_r = '/etc/SuSE-release' 
+    etc_S_r = '/etc/os-release'
     if len(args) == 1:
     #{
       if re.search('\.rpm$', args[0]):
@@ -557,6 +557,7 @@ def _layered_repos(self, proj, platform, pack):
 def _read_system_name(self, file, opts):
     print("using %s to match build platforms" % (file))
     text = open(file).read()
+    text = text.replace('"', '')
     a = {}
     for i in (re.split("[\s_:=\(\)]+", text)):
       a[i] = 2
