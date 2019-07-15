@@ -163,6 +163,7 @@
 
 from __future__ import print_function
 import traceback, sys
+from platform import uname
 from osc import cmdln
 
 global OSC_INS_PLUGIN_VERSION, OSC_INS_PLUGIN_NAME
@@ -302,7 +303,7 @@ def do_install(self, subcmd, opts, *args):
             self._find_cached(all, osc_cache)
         ## extract all platforms, then ...
         seen = {};
-        arch_words = self._read_system_name(etc_S_r, opts)
+        arch_words = uname()[-1]
         if (opts.arch is not None): 
           # and nothing else.
           arch_words = [ opts.arch ]
@@ -310,7 +311,7 @@ def do_install(self, subcmd, opts, *args):
             arch_words.append('i586')
             arch_words.append('i686')
             arch_words.append('i386')
-          if opts.verbose: print(arch_words)
+          if opts.verbose: print("arch_words: ", arch_words)
 
         for r in all:
           if not 'baseproject' in r:
