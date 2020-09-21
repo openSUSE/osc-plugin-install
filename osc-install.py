@@ -797,13 +797,13 @@ class TeePopen():
         subclass and overwrite this, if a tee'ing to a file-like object is inadequate
         tee_read is called whenever fd was found readable. fd is the masterside of a PTY.
         """
-        r = os.read(fd, 1024)
+        r = (os.read(fd, 1024)).decode()
         self.tee.write(r)
         # shorten long hex strings and useless urls, they just look ugly.
         r = re.sub('Retrieving: [0-9a-f]+\-', 'Retrieving: ...-', r, re.M)
         r = re.sub("Adding repository '\S+'", 'Adding: ...', r, re.M)
         r = re.sub("Building repository '\S+' cache", 'Cache: ...', r, re.M)
-        return self.silent if self.silent else r
+        return self.silent if self.silent else r.encode()
 
     def __str__(self):
         return self.tee.getvalue() if self.internal_fd else self.tee
@@ -830,7 +830,7 @@ def _pipe_from_cmd_stdout(self, cmdv, progress='.', term='\n', tee=False):
     p = subprocess.Popen(cmdv, stdout=subprocess.PIPE)
     all = ''
     while True:
-        r = p.stdout.read()
+        r = p.stdout.read().decode()
         if tee:
             sys.stdout.write(r)
             if progress is not None:
