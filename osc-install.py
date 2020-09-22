@@ -633,6 +633,7 @@ def _best_platform(self, etc_suse_release, repos, opts):
     max_score = 0
     if len(repos):
         for i in (range(0, len(repos))):
+            repos = list(repos)
             score = self._matches_in_name(repos[i], platform_words)
             if opts.verbose:
                 print("repo %s: score %s" % (repos[i], score))
